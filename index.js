@@ -27,18 +27,69 @@ const start = () => {
             'View All Employees',
             'View All Employees By Department',
             'View All Employees By Manager',
+            'View All Roles',
+            'View All Departments',
+            'View the total utilized budget by department',
             'Add Employee',
+            'Add Role',
+            'Add Department',
             'Remove Employee',
+            'Remove Role',
+            'Remove Department',
             'Update Employee Role',
             'Update Employee Manager',
-            'View All Roles',
-            'Add Role',
-            'View All Departments',
-            'Add Department',
-            'exit',
+            'Exit',
         ],
         loop: false
-
+    }).then((answer) => {
+        switch (answer.action) {
+            case 'View All Employees':
+                viewAllEmployees();
+                break;
+            case 'View All Employees By Department':
+                viewAllEmployeesByDepartment();
+                break;
+            case 'View All Employees By Manager':
+                viewAllEmployeesByManager();
+                break;
+            case 'View All Roles':
+                viewAllRoles();
+                break;
+            case 'View All Departments':
+                viewAllDepartment();
+                break;
+            case 'View the total utilized budget by department':
+                viewBudgetByDepartment();
+                break;
+            case 'Add Employee':
+                addEmployee();
+                break;
+            case 'Add Role':
+                addRole();
+                break;
+            case 'Add Department':
+                addDepartment();
+                break;
+            case 'Remove Employee':
+                removeEmployee();
+                break;
+            case 'Remove Role':
+                removeRole();
+                break;
+            case 'Remove Department':
+                removeDepartment();
+                break;
+            case 'Update Employee Role':
+                updateEmployeeRole();
+                break;
+            case 'Update Employee Manager':
+                updateEmployeeManager();
+                break;
+            default:
+                // 4. End the connection
+                connection.end();
+                break;
+        }
     })
 }
 
@@ -55,5 +106,3 @@ connection.connect((err) => {
 start();
 })
 
-// 4. End the connection
-connection.end();
