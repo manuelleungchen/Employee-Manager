@@ -49,3 +49,32 @@ INSERT INTO employee (first_name, last_name, role_id) VALUES
 INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES 
 ("Mike", "Chan", 2, 1),
 ("Kevin", "Tipuk", 4, 3);
+
+
+
+SELECT first_name FROM employee WHERE id = 3;
+SELECT CONCAT(employee.first_name, ' ' ,  employee.last_name) AS manager FROM employee LEFT JOIN employee e ON e.id = employee.manager_id;
+
+SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary, employee.manager_id FROM 
+(employee INNER JOIN role ON employee.role_id = role.id)
+INNER JOIN department ON role.department_id = department.id;
+
+SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary, 
+CONCAT(manager.first_name, ' ' ,  manager.last_name) AS manager  
+FROM (employee INNER JOIN role ON employee.role_id = role.id) INNER JOIN department 
+ON role.department_id = department.id LEFT JOIN employee manager ON manager.id = employee.manager_id;
+
+
+SELECT CONCAT(manager.first_name, ' ' ,  manager.last_name) AS manager 
+FROM employee INNER JOIN employee manager ON manager.id = employee.manager_id;
+
+FROM (employee INNER JOIN role ON employee.role_id = role.id)
+INNER JOIN department ON role.department_id = department.id;
+
+
+SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS Department, role.salary, 
+CONCAT(employee.first_name, ' ' ,  employee.last_name) AS manager FROM employee LEFT JOIN employee e ON e.id = employee.manager_id 
+LEFT JOIN role ON employee.role_id = role.id LEFT JOIN department ON role.department_id = department.id ORDER BY ID ASC;
+
+
+

@@ -17,6 +17,20 @@ const connection = mysql.createConnection({
     database: "employeeManagerDB"
 });
 
+// This function will query and display all employees
+const viewAllEmployees = () => {
+    const query = `SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary, 
+    CONCAT(manager.first_name, ' ' ,  manager.last_name) AS manager  
+    FROM (employee INNER JOIN role ON employee.role_id = role.id) INNER JOIN department 
+    ON role.department_id = department.id LEFT JOIN employee manager ON manager.id = employee.manager_id;`;
+        const callBack = (err, res) => {
+            if (err) throw err;
+            console.table(res);
+            start();
+        }
+        connection.query(query, callBack);
+}
+
 // This function start the employee manager application.
 const start = () => {
     inquirer.prompt({
