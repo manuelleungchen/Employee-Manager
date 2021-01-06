@@ -1,33 +1,3 @@
-DROP DATABASE IF EXISTS employeeManagerDB;
-
-CREATE DATABASE employeeManagerDB;
-
-USE employeeManagerDB;
-
-CREATE TABLE department (
-    id INT NOT NULL AUTO_INCREMENT,
-    name VARCHAR(30),
-    PRIMARY KEY (id)
-);
-
-CREATE TABLE role (
-    id INT NOT NULL AUTO_INCREMENT,
-    title VARCHAR(30) ,
-    salary DECIMAL(10,2),
-    department_id INT,
-    PRIMARY KEY (id),
-    FOREIGN KEY (department_id) REFERENCES department(id)
-);
-
-CREATE TABLE employee (
-    id INT NOT NULL AUTO_INCREMENT,
-    first_name VARCHAR(30),
-    last_name VARCHAR(30),
-    role_id INT,
-    manager_id INT DEFAULT null,
-    PRIMARY KEY (id),
-    FOREIGN KEY (role_id) REFERENCES role(id)
-);
 
 INSERT INTO department (name) VALUES ("Sales"), ("Finance"), ("Engineering"), ("Legal");
 
@@ -51,30 +21,20 @@ INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES
 ("Kevin", "Tipuk", 4, 3);
 
 
-
-SELECT first_name FROM employee WHERE id = 3;
-SELECT CONCAT(employee.first_name, ' ' ,  employee.last_name) AS manager FROM employee LEFT JOIN employee e ON e.id = employee.manager_id;
-
-SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary, employee.manager_id FROM 
-(employee INNER JOIN role ON employee.role_id = role.id)
-INNER JOIN department ON role.department_id = department.id;
-
 SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary, 
 CONCAT(manager.first_name, ' ' ,  manager.last_name) AS manager  
 FROM (employee INNER JOIN role ON employee.role_id = role.id) INNER JOIN department 
 ON role.department_id = department.id LEFT JOIN employee manager ON manager.id = employee.manager_id;
 
+SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary, 
+CONCAT(manager.first_name, ' ' ,  manager.last_name) AS manager  
+FROM (employee INNER JOIN role ON employee.role_id = role.id) INNER JOIN department 
+ON role.department_id = department.id LEFT JOIN employee manager ON manager.id = employee.manager_id ORDER BY department ASC;
 
-SELECT CONCAT(manager.first_name, ' ' ,  manager.last_name) AS manager 
-FROM employee INNER JOIN employee manager ON manager.id = employee.manager_id;
-
-FROM (employee INNER JOIN role ON employee.role_id = role.id)
-INNER JOIN department ON role.department_id = department.id;
-
-
-SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS Department, role.salary, 
-CONCAT(employee.first_name, ' ' ,  employee.last_name) AS manager FROM employee LEFT JOIN employee e ON e.id = employee.manager_id 
-LEFT JOIN role ON employee.role_id = role.id LEFT JOIN department ON role.department_id = department.id ORDER BY ID ASC;
+SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary, 
+CONCAT(manager.first_name, ' ' ,  manager.last_name) AS manager  
+FROM (employee INNER JOIN role ON employee.role_id = role.id) INNER JOIN department 
+ON role.department_id = department.id LEFT JOIN employee manager ON manager.id = employee.manager_id ORDER BY manager ASC;
 
 
 
