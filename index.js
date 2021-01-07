@@ -142,7 +142,7 @@ const viewAllEmployeesByManager = () => {
 
 // This function will query and display all Roles
 const viewAllRoles = () => {
-    const query = `SELECT id AS ID, title AS Title, salary AS Salary, department.name AS Department 
+    const query = `SELECT role.id AS ID, title AS Title, salary AS Salary, department.name AS Department 
     FROM role INNER JOIN department ON role.department_id = department.id ORDER BY title ASC;`;
     const callBack = (err, res) => {
         if (err) throw err;
@@ -175,6 +175,97 @@ const viewBudgetByDepartment = () => {
     }
     connection.query(query, callBack);
 }
+
+// This function will add a new employee to employee table
+const addEmployee = () => {
+
+    let roleList = [];
+    let managerList = [];
+
+    connection.query(
+        // Query all roles
+        'SELECT * FROM role ORDER BY title ASC;',
+        (err, roleResponse) => {
+            if (err) throw err;
+            roleResponse.forEach(role => {
+                roleList.push(role.title);
+            });
+            connection.query(
+                // Query all employees
+                "SELECT id, CONCAT(first_name, ' ' ,  last_name) AS Manager FROM employee ORDER BY Manager ASC;",
+                (err, employeeResponse) => {
+                    if (err) throw err;
+
+                    employeeResponse.forEach(manager => {
+                        managerList.push(manager.Manager);
+                    });
+                    // After querying all roles and employees, prompt the user for new employee info
+                    inquirer.prompt([
+                        {
+                            name: 'firstname',
+                            type: 'input',
+                            message: "What is the employee's first name?",
+                        },
+                        {
+                            name: 'lastname',
+                            type: 'input',
+                            message: "What is the employee's last name?",
+                        },
+                        {
+                            type: 'rawlist',
+                            message: "What is the employee's role?",
+                            name: 'roleName',
+                            choices: roleList,
+                            loop: false
+                        },
+                        {
+                            type: 'rawlist',
+                            message: "Who is the employee's manager?",
+                            name: 'managerName',
+                            choices: managerList,
+                            loop: false
+                        }
+
+                    ]).then((answer) => {
+
+                        // Get the ID information of the chosen role and manager
+                        let roleID;
+                        let managerID;
+
+                        // Loop though each row of the query response and get role id
+                        roleResponse.forEach(role => {
+                            if (answer.roleName === role.title) {
+                                roleID = role.id;
+                            }
+                        });
+                        // Loop though each row of the query response and get manager id
+                        employeeResponse.forEach(employee => {
+                            if (answer.managerName === employee.Manager) {
+                                managerID = employee.id;
+                            }
+                        });
+
+                        // Insert a new employee with the promp anwsers
+                        connection.query(
+                            `INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES 
+                            (?, ?, ?, ?);`,
+                            [
+                                answer.firstname, answer.lastname, roleID, managerID
+                            ],
+                            (err, res) => {
+                                if (err) throw err;
+                                console.log(`Added ${answer.firstname} ${answer.lastname} Successfully!`);
+                                start();
+                            }
+                        );
+                    })
+                }
+            );
+        }
+    );
+}
+
+
 
 // This function will add a new role to role table
 const addRole = () => {
