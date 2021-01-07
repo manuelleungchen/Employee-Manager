@@ -163,6 +163,18 @@ const viewAllDepartment = () => {
     connection.query(query, callBack);
 }
 
+// This function will query and display budget by Department
+const viewBudgetByDepartment = () => {
+    const query = `SELECT department.id AS ID, department.name AS Department, SUM(salary) AS Budget 
+    FROM role INNER JOIN department ON role.department_id = department.id GROUP BY (department_id) 
+    ORDER BY Department;`;
+    const callBack = (err, res) => {
+        if (err) throw err;
+        console.table(res);
+        start();
+    }
+    connection.query(query, callBack);
+}
 
 // This function will add a new role to role table
 const addRole = () => {

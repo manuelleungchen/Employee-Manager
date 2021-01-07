@@ -39,6 +39,9 @@ SELECT title AS Title, salary AS Salary, department.name AS Department FROM role
 
 SELECT name AS Department FROM department ORDER BY Department ASC;
 
+SELECT department.id AS ID, department.name AS Department, SUM(salary) AS Budget FROM role INNER JOIN department 
+ON role.department_id = department.id GROUP BY (department_id) ORDER BY Department;
+
 
 
 
