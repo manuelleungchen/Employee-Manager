@@ -95,8 +95,9 @@ const start = () => {
 
 // This function will query and display all employees
 const viewAllEmployees = () => {
-    const query = `SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary, 
-    CONCAT(manager.first_name, ' ' ,  manager.last_name) AS manager  
+    const query = `SELECT employee.id AS ID, employee.first_name AS Firstname, employee.last_name AS Lastname, 
+    role.title AS Title, department.name AS Department, role.salary AS Salary, 
+    CONCAT(manager.first_name, ' ' ,  manager.last_name) AS Manager  
     FROM (employee INNER JOIN role ON employee.role_id = role.id) INNER JOIN department 
     ON role.department_id = department.id LEFT JOIN employee manager ON manager.id = employee.manager_id;`;
         const callBack = (err, res) => {
@@ -109,10 +110,12 @@ const viewAllEmployees = () => {
 
 // This function will query and display all employees
 const viewAllEmployeesByDepartment = () => {
-    const query = `SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary, 
-    CONCAT(manager.first_name, ' ' ,  manager.last_name) AS manager  
+    const query = `SELECT employee.id AS ID, employee.first_name AS Firstname, employee.last_name AS Lastname,
+    role.title AS Title, department.name AS Department, role.salary AS Salary, 
+    CONCAT(manager.first_name, ' ' ,  manager.last_name) AS Manager 
     FROM (employee INNER JOIN role ON employee.role_id = role.id) INNER JOIN department 
-    ON role.department_id = department.id LEFT JOIN employee manager ON manager.id = employee.manager_id ORDER BY department ASC;`;
+    ON role.department_id = department.id LEFT JOIN employee manager ON manager.id = employee.manager_id 
+    ORDER BY department ASC;`;
         const callBack = (err, res) => {
             if (err) throw err;
             console.table(res);
@@ -123,10 +126,23 @@ const viewAllEmployeesByDepartment = () => {
 
 // This function will query and display all employees
 const viewAllEmployeesByManager = () => {
-    const query = `SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary, 
-    CONCAT(manager.first_name, ' ' ,  manager.last_name) AS manager  
+    const query = `SELECT employee.id AS ID, employee.first_name AS Firstname, employee.last_name AS Lastname, 
+    role.title AS Title, department.name AS Department, role.salary AS Salary, 
+    CONCAT(manager.first_name, ' ' ,  manager.last_name) AS Manager 
     FROM (employee INNER JOIN role ON employee.role_id = role.id) INNER JOIN department 
-    ON role.department_id = department.id LEFT JOIN employee manager ON manager.id = employee.manager_id ORDER BY manager ASC;`;
+    ON role.department_id = department.id LEFT JOIN employee manager ON manager.id = employee.manager_id 
+    ORDER BY manager ASC;`;
+        const callBack = (err, res) => {
+            if (err) throw err;
+            console.table(res);
+            start();
+        }
+        connection.query(query, callBack);
+}
+
+const viewAllRoles = () => {
+    const query = `SELECT title AS Title, salary AS Salary, department.name AS Department 
+    FROM role INNER JOIN department ON role.department_id = department.id ORDER BY title ASC;`;
         const callBack = (err, res) => {
             if (err) throw err;
             console.table(res);
