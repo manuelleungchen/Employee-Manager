@@ -35,13 +35,15 @@ CONCAT(manager.first_name, ' ' ,  manager.last_name) AS Manager
 FROM (employee INNER JOIN role ON employee.role_id = role.id) INNER JOIN department 
 ON role.department_id = department.id LEFT JOIN employee manager ON manager.id = employee.manager_id ORDER BY manager ASC;
 
-SELECT title AS Title, salary AS Salary, department.name AS Department FROM role INNER JOIN department ON role.department_id = department.id ORDER BY title ASC;
+SELECT role.title AS Title, salary AS Salary, department.name AS Department FROM role INNER JOIN department ON role.department_id = department.id ORDER BY title ASC;
 
 SELECT name AS Department FROM department ORDER BY Department ASC;
 
 SELECT department.id AS ID, department.name AS Department, SUM(salary) AS Budget FROM role INNER JOIN department 
 ON role.department_id = department.id GROUP BY (department_id) ORDER BY Department;
 
+SELECT * FROM role ORDER BY title ASC;
 
+SELECT id, CONCAT(first_name, ' ' ,  last_name) AS Manager FROM employee ORDER BY Manager ASC;
 
 
