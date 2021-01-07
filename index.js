@@ -108,7 +108,7 @@ const viewAllEmployees = () => {
         connection.query(query, callBack);
 }
 
-// This function will query and display all employees
+// This function will query and display all employees BY Dept name
 const viewAllEmployeesByDepartment = () => {
     const query = `SELECT employee.id AS ID, employee.first_name AS Firstname, employee.last_name AS Lastname,
     role.title AS Title, department.name AS Department, role.salary AS Salary, 
@@ -124,7 +124,7 @@ const viewAllEmployeesByDepartment = () => {
         connection.query(query, callBack);
 }
 
-// This function will query and display all employees
+// This function will query and display all employees BY Manager name
 const viewAllEmployeesByManager = () => {
     const query = `SELECT employee.id AS ID, employee.first_name AS Firstname, employee.last_name AS Lastname, 
     role.title AS Title, department.name AS Department, role.salary AS Salary, 
@@ -140,6 +140,7 @@ const viewAllEmployeesByManager = () => {
         connection.query(query, callBack);
 }
 
+// This function will query and display all Roles
 const viewAllRoles = () => {
     const query = `SELECT title AS Title, salary AS Salary, department.name AS Department 
     FROM role INNER JOIN department ON role.department_id = department.id ORDER BY title ASC;`;
@@ -151,7 +152,16 @@ const viewAllRoles = () => {
         connection.query(query, callBack);
 }
 
-
+// This function will query and display all Department
+const viewAllDepartment = () => {
+    const query = `SELECT name AS Department FROM department ORDER BY Department ASC;`;
+        const callBack = (err, res) => {
+            if (err) throw err;
+            console.table(res);
+            start();
+        }
+        connection.query(query, callBack);
+}
 
 // 3. Instantiate your connection
 connection.connect((err) => {
