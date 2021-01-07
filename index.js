@@ -100,12 +100,12 @@ const viewAllEmployees = () => {
     CONCAT(manager.first_name, ' ' ,  manager.last_name) AS Manager  
     FROM (employee INNER JOIN role ON employee.role_id = role.id) INNER JOIN department 
     ON role.department_id = department.id LEFT JOIN employee manager ON manager.id = employee.manager_id;`;
-        const callBack = (err, res) => {
-            if (err) throw err;
-            console.table(res);
-            start();
-        }
-        connection.query(query, callBack);
+    const callBack = (err, res) => {
+        if (err) throw err;
+        console.table(res);
+        start();
+    }
+    connection.query(query, callBack);
 }
 
 // This function will query and display all employees BY Dept name
@@ -116,12 +116,12 @@ const viewAllEmployeesByDepartment = () => {
     FROM (employee INNER JOIN role ON employee.role_id = role.id) INNER JOIN department 
     ON role.department_id = department.id LEFT JOIN employee manager ON manager.id = employee.manager_id 
     ORDER BY department ASC;`;
-        const callBack = (err, res) => {
-            if (err) throw err;
-            console.table(res);
-            start();
-        }
-        connection.query(query, callBack);
+    const callBack = (err, res) => {
+        if (err) throw err;
+        console.table(res);
+        start();
+    }
+    connection.query(query, callBack);
 }
 
 // This function will query and display all employees BY Manager name
@@ -132,40 +132,120 @@ const viewAllEmployeesByManager = () => {
     FROM (employee INNER JOIN role ON employee.role_id = role.id) INNER JOIN department 
     ON role.department_id = department.id LEFT JOIN employee manager ON manager.id = employee.manager_id 
     ORDER BY manager ASC;`;
-        const callBack = (err, res) => {
-            if (err) throw err;
-            console.table(res);
-            start();
-        }
-        connection.query(query, callBack);
+    const callBack = (err, res) => {
+        if (err) throw err;
+        console.table(res);
+        start();
+    }
+    connection.query(query, callBack);
 }
 
 // This function will query and display all Roles
 const viewAllRoles = () => {
-    const query = `SELECT title AS Title, salary AS Salary, department.name AS Department 
+    const query = `SELECT id AS ID, title AS Title, salary AS Salary, department.name AS Department 
     FROM role INNER JOIN department ON role.department_id = department.id ORDER BY title ASC;`;
-        const callBack = (err, res) => {
-            if (err) throw err;
-            console.table(res);
-            start();
-        }
-        connection.query(query, callBack);
+    const callBack = (err, res) => {
+        if (err) throw err;
+        console.table(res);
+        start();
+    }
+    connection.query(query, callBack);
 }
 
 // This function will query and display all Department
 const viewAllDepartment = () => {
-    const query = `SELECT name AS Department FROM department ORDER BY Department ASC;`;
-        const callBack = (err, res) => {
-            if (err) throw err;
-            console.table(res);
-            start();
+    const query = `SELECT id AS ID, name AS Department FROM department ORDER BY Department ASC;`;
+    const callBack = (err, res) => {
+        if (err) throw err;
+        console.table(res);
+        start();
+    }
+    connection.query(query, callBack);
+}
+
+
+// This function will add a new role to role table
+const addRole = () => {
+    const query = `SELECT * FROM department ORDER BY name ASC;`;
+    const callBack = (err, res) => {
+        if (err) throw err;
+
+        // After querying all departments, prompt the user for which they'd like to add a role
+        inquirer.prompt([
+            {
+                type: 'rawlist',
+                message: 'Which DEPT would you like to place a new role in?',
+                name: 'departName',
+                choices() {
+                    let departList = [];
+                    res.forEach(depart => {
+                        departList.push(depart.name);
+                    });
+                    return departList;
+                },
+                loop: false
+            },
+            {
+                name: 'newRole',
+                type: 'input',
+                message: 'What is the new role?',
+            },
+            {
+                name: 'salaryRole',
+                type: 'number',
+                message: 'What is the salary?',
+            }
+        ]).then((answer) => {
+            // Get the information of the chosen depart
+            let departID;
+            res.forEach(depart => {
+                if (answer.departName === depart.name) {
+                    departID = depart.id;
+                }
+            });
+            connection.query(
+                'INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?);',
+                [
+                    answer.newRole, answer.salaryRole, departID
+                ],
+                (err, res) => {
+                    if (err) throw err;
+                    console.log(`New Role Added Successfully!`);
+                    start();
+                }
+            );
+        })
+    }
+    connection.query(query, callBack);
+}
+
+// This function will add a new department to department table
+const addDepartment = () => {
+
+    inquirer.prompt([
+        {
+            name: 'newDepart',
+            type: 'input',
+            message: 'What is the new Department name?',
         }
-        connection.query(query, callBack);
+    ]).then((answer) => {
+        connection.query(
+            'INSERT INTO department (name) VALUES (?);',
+            [
+                answer.newDepart
+            ],
+            (err, res) => {
+                if (err) throw err;
+                console.log(`New DEPT Added Successfully!`);
+                start();
+            }
+        );
+    })
 }
 
 // 3. Instantiate your connection
 connection.connect((err) => {
-    if(err) throw err;
+    if (err) throw err;
     console.log(`
  ________________________
 |                        |
@@ -173,6 +253,6 @@ connection.connect((err) => {
 |                        |
 '------------------------'
 `);
-start();
+    start();
 })
 
