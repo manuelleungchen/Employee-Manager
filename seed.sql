@@ -46,12 +46,18 @@ SELECT * FROM role ORDER BY title ASC;
 
 SELECT id, CONCAT(first_name, ' ' ,  last_name) AS Manager FROM employee ORDER BY Manager ASC;
 
-UPDATE employee SET role = ? WHERE id = ?; 
-
+UPDATE employee SET role_id = ? WHERE id = ?; 
 UPDATE employee SET manager_id = ? WHERE id = ?; 
+
 
 SELECT id, CONCAT(first_name, ' ' ,  last_name) AS Manager FROM employee WHERE id != ? ORDER BY Manager ASC;
 
+UPDATE employee SET manager_id = null WHERE manager_id = 1; 
+DELETE FROM employee WHERE id = ?;
 
+DELETE FROM employee WHERE role_id = 3;
+DELETE FROM role WHERE id = ?;
 
+UPDATE role SET department_id = null WHERE department_id = 4; 
+DELETE FROM department WHERE id = ?;
 
