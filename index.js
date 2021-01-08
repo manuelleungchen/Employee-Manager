@@ -199,6 +199,8 @@ const addEmployee = () => {
                     employeeResponse.forEach(manager => {
                         managerList.push(manager.Manager);
                     });
+                    managerList.push("No manager");
+
                     // After querying all roles and employees, prompt the user for new employee info
                     inquirer.prompt([
                         {
@@ -264,8 +266,6 @@ const addEmployee = () => {
         }
     );
 }
-
-
 
 // This function will add a new role to role table
 const addRole = () => {
@@ -374,7 +374,7 @@ const updateEmployeeRole = () => {
                     inquirer.prompt([
                         {
                             type: 'rawlist',
-                            message: "What employee would you like to update?",
+                            message: "Which employee would you like to update?",
                             name: 'employeeName',
                             choices: employeesList,
                             loop: false
@@ -427,7 +427,7 @@ const updateEmployeeRole = () => {
 
 }
 
-// This function will update employee's role
+// This function will update employee's manager
 const updateEmployeeManager = () => {
 
     let employeesList = [];
@@ -445,7 +445,7 @@ const updateEmployeeManager = () => {
             inquirer.prompt(
                 {
                     type: 'rawlist',
-                    message: "What employee would you like to update?",
+                    message: "Which employee would you like to update?",
                     name: 'employeeName',
                     choices: employeesList,
                     loop: false
@@ -507,6 +507,160 @@ const updateEmployeeManager = () => {
             });
 
 
+        }
+    );
+
+}
+
+// This function will remove employee
+const removeEmployee = () => {
+
+    let employeesList = [];
+
+    connection.query(
+        // Query all employees
+        `SELECT id, CONCAT(first_name, ' ' ,  last_name) AS Employee 
+    FROM employee ORDER BY Employee ASC;`,
+        (err, employeesResponse) => {
+            if (err) throw err;
+            employeesResponse.forEach(em => {
+                employeesList.push(em.Employee);
+            });
+            inquirer.prompt(
+                {
+                    type: 'rawlist',
+                    message: "Which employee would you like to remove?",
+                    name: 'employeeName',
+                    choices: employeesList,
+                    loop: false
+                }
+            ).then((answer) => {
+                let employeeID;
+
+                // Loop though each row of the query response and get employee id
+                employeesResponse.forEach(employee => {
+                    if (answer.employeeName === employee.Employee) {
+                        employeeID = employee.id;
+                    }
+                });
+                connection.query(//  employee by selected employee id
+                    `UPDATE employee SET manager_id = null WHERE manager_id = ${employeeID};`,
+                    (err, res) => {
+                        if (err) throw err;
+                        connection.query(// Delete employee by selected employee id
+                            `DELETE FROM employee WHERE id = ${employeeID};`,
+                            (err, res) => {
+                                if (err) throw err;
+                                console.log(`${answer.employeeName} was deleted!`);
+                                start();
+                            }
+                        )
+                    }
+                )
+            });
+
+
+        }
+    );
+
+}
+
+// This function will remove role
+const removeRole = () => {
+
+    let rolesList = [];
+
+    connection.query(
+        // Query all role
+        `SELECT * FROM role ORDER BY title ASC;`,
+        (err, allRoles) => {
+            if (err) throw err;
+            allRoles.forEach(role => {
+                rolesList.push(role.title);
+            });
+            inquirer.prompt(
+                {
+                    type: 'rawlist',
+                    message: "Which role would you like to remove?",
+                    name: 'roleName',
+                    choices: rolesList,
+                    loop: false
+                }
+            ).then((answer) => {
+                let roleID;
+
+                // Loop though each row of the query response and get role id
+                allRoles.forEach(role => {
+                    if (answer.roleName === role.title) {
+                        roleID = role.id;
+                    }
+                });
+                connection.query(// Delete role 
+                    `DELETE FROM employee WHERE role_id = ${roleID};`,
+                    (err, res) => {
+                        if (err) throw err;
+                        connection.query(// Delete role 
+                            `DELETE FROM role WHERE id = ${roleID};`,
+                            (err, res) => {
+                                if (err) throw err;
+                                console.log(`${answer.roleName} role was deleted!`);
+                                start();
+        
+                            }
+                        )
+                    }
+                )
+            });
+        }
+    );
+
+}
+
+// This function will remove dept
+const removeDepartment = () => {
+
+    let deptList = [];
+
+    connection.query(
+        // Query all dept
+        `SELECT * FROM department ORDER BY name ASC;`,
+        (err, allDept) => {
+            if (err) throw err;
+            allDept.forEach(dept => {
+                deptList.push(dept.name);
+            });
+            inquirer.prompt(
+                {
+                    type: 'list',
+                    message: "Which department would you like to remove?",
+                    name: 'deptName',
+                    choices: deptList,
+                    loop: false
+                }
+            ).then((answer) => {
+                let deptID;
+
+                // Loop though each row of the query response and get dept id
+                allDept.forEach(dept => {
+                    if (answer.deptName === dept.name) {
+                        deptID = dept.id;
+                    }
+                });
+                connection.query(// Delete dept 
+                    `UPDATE role SET department_id = null WHERE department_id = ${deptID};`,
+                    (err, res) => {
+                        if (err) throw err;
+                        connection.query(// Delete dept 
+                            `DELETE FROM department WHERE id = ${deptID};`,
+                            (err, res) => {
+                                if (err) throw err;
+                                console.log(`${answer.deptName} dept was deleted!`);
+                                start();
+                            }
+                        )
+                    }
+                )
+            });
         }
     );
 
