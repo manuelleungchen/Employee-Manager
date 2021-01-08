@@ -346,6 +346,172 @@ const addDepartment = () => {
     })
 }
 
+// This function will update employee's role
+const updateEmployeeRole = () => {
+
+    let employeesList = [];
+    let rolesList = [];
+
+    connection.query(
+        // Query all employees
+        `SELECT id, CONCAT(first_name, ' ' ,  last_name) AS Employee 
+    FROM employee ORDER BY Employee ASC;`,
+        (err, employeesResponse) => {
+            if (err) throw err;
+            employeesResponse.forEach(em => {
+                employeesList.push(em.Employee);
+            });
+            connection.query(
+                // Query all roles
+                `SELECT * FROM role ORDER BY title ASC;`,
+                (err, rolesResponse) => {
+                    if (err) throw err;
+
+                    rolesResponse.forEach(role => {
+                        rolesList.push(role.title);
+                    });
+                    // After querying all roles and employees, prompt the user for new role
+                    inquirer.prompt([
+                        {
+                            type: 'rawlist',
+                            message: "What employee would you like to update?",
+                            name: 'employeeName',
+                            choices: employeesList,
+                            loop: false
+                        },
+                        {
+                            type: 'rawlist',
+                            message: "What is the new role?",
+                            name: 'roleName',
+                            choices: rolesList,
+                            loop: false
+                        }
+
+                    ]).then((answer) => {
+
+                        // Get the ID information of the chosen employee and role
+                        let employeeID;
+                        let roleID;
+
+                        // Loop though each row of the query response and get employee id
+                        employeesResponse.forEach(employee => {
+                            if (answer.employeeName === employee.Employee) {
+                                employeeID = employee.id;
+                            }
+                        });
+
+                        // Loop though each row of the query response and get role id
+                        rolesResponse.forEach(role => {
+                            if (answer.roleName === role.title) {
+                                roleID = role.id;
+                            }
+                        });
+
+                        // Insert a new employee with the promp anwsers
+                        connection.query(
+                            `UPDATE employee SET role_id = ? WHERE id = ?;`,
+                            [
+                                roleID, employeeID
+                            ],
+                            (err, res) => {
+                                if (err) throw err;
+                                console.log(`Role Updated Successfully!`);
+                                start();
+                            }
+                        );
+                    })
+                }
+            );
+        }
+    );
+
+}
+
+// This function will update employee's role
+const updateEmployeeManager = () => {
+
+    let employeesList = [];
+    let managersList = [];
+
+    connection.query(
+        // Query all employees
+        `SELECT id, CONCAT(first_name, ' ' ,  last_name) AS Employee 
+    FROM employee ORDER BY Employee ASC;`,
+        (err, employeesResponse) => {
+            if (err) throw err;
+            employeesResponse.forEach(em => {
+                employeesList.push(em.Employee);
+            });
+            inquirer.prompt(
+                {
+                    type: 'rawlist',
+                    message: "What employee would you like to update?",
+                    name: 'employeeName',
+                    choices: employeesList,
+                    loop: false
+                }
+            ).then((answer) => {
+                let employeeID;
+
+                // Loop though each row of the query response and get employee id
+                employeesResponse.forEach(employee => {
+                    if (answer.employeeName === employee.Employee) {
+                        employeeID = employee.id;
+                    }
+                });
+                connection.query(// Query all employees except the selected employee to update
+                    `SELECT id, CONCAT(first_name, ' ' ,  last_name) AS Manager 
+                FROM employee WHERE id != ${employeeID} ORDER BY Manager ASC;`,
+                    (err, managersResponse) => {
+                        if (err) throw err;
+                        managersResponse.forEach(manager => {
+                            managersList.push(manager.Manager);
+                        });
+                        // After querying all roles and employees, prompt the user for new role
+                        inquirer.prompt([
+                            {
+                                type: 'rawlist',
+                                message: "Who is the new manager?",
+                                name: 'managerName',
+                                choices: managersList,
+                                loop: false
+                            }
+
+                        ]).then((answer) => {
+
+                            // Get the ID information of the chosen employee and role
+                            let managerID;
+
+                            // Loop though each row of the query response and get role id
+                            managersResponse.forEach(manager => {
+                                if (answer.managerName === manager.Manager) {
+                                    managerID = manager.id;
+                                }
+                            });
+
+                            // Insert a new employee with the promp anwsers
+                            connection.query(
+                                `UPDATE employee SET manager_id = ? WHERE id = ?;`,
+                                [
+                                    managerID, employeeID
+                                ],
+                                (err, res) => {
+                                    if (err) throw err;
+                                    console.log(`Manager Updated Successfully!`);
+                                    start();
+                                }
+                            );
+                        })
+                    }
+                )
+            });
+
+
+        }
+    );
+
+}
+
 // 3. Instantiate your connection
 connection.connect((err) => {
     if (err) throw err;
