@@ -5,7 +5,9 @@
 ## Description  
 This application track down and manage employees, roles and departments. It is controlled with input from the command line and can perform SQL CRUD operations. Input prompts are created using the npm module [Inquirer](https://www.npmjs.com/package/inquirer). 
 
-### Sample Image
+### Sample Images
+
+![schema](./assets/schema.png)
 
 ![Screenshot](./assets/Employee_manager.png)
     

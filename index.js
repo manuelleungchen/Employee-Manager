@@ -544,17 +544,19 @@ const removeEmployee = () => {
                     }
                 });
                 connection.query(//  employee by selected employee id
-                    `UPDATE employee SET manager_id = null WHERE manager_id = ${employeeID};`,
+                    `DELETE FROM employee WHERE id = ${employeeID};`,
                     (err, res) => {
                         if (err) throw err;
-                        connection.query(// Delete employee by selected employee id
-                            `DELETE FROM employee WHERE id = ${employeeID};`,
-                            (err, res) => {
-                                if (err) throw err;
-                                console.log(`${answer.employeeName} was deleted!`);
-                                start();
-                            }
-                        )
+                        // connection.query(// Delete employee by selected employee id
+                        //     `DELETE FROM employee WHERE id = ${employeeID};`,
+                        //     (err, res) => {
+                        //         if (err) throw err;
+                        //         console.log(`${answer.employeeName} was deleted!`);
+                        //         start();
+                        //     }
+                        // )
+                        console.log(`${answer.employeeName} was deleted!`);
+                        start();
                     }
                 )
             });
@@ -596,18 +598,20 @@ const removeRole = () => {
                     }
                 });
                 connection.query(// Delete role 
-                    `DELETE FROM employee WHERE role_id = ${roleID};`,
+                    `DELETE FROM role WHERE id = ${roleID};`,
                     (err, res) => {
                         if (err) throw err;
-                        connection.query(// Delete role 
-                            `DELETE FROM role WHERE id = ${roleID};`,
-                            (err, res) => {
-                                if (err) throw err;
-                                console.log(`${answer.roleName} role was deleted!`);
-                                start();
+                        // connection.query(// Delete role 
+                        //     `DELETE FROM role WHERE id = ${roleID};`,
+                        //     (err, res) => {
+                        //         if (err) throw err;
+                        //         console.log(`${answer.roleName} role was deleted!`);
+                        //         start();
         
-                            }
-                        )
+                        //     }
+                        // )
+                        console.log(`${answer.roleName} role was deleted!`);
+                        start();
                     }
                 )
             });
@@ -647,17 +651,19 @@ const removeDepartment = () => {
                     }
                 });
                 connection.query(// Delete dept 
-                    `UPDATE role SET department_id = null WHERE department_id = ${deptID};`,
+                    `DELETE FROM department WHERE id = ${deptID};`,
                     (err, res) => {
                         if (err) throw err;
-                        connection.query(// Delete dept 
-                            `DELETE FROM department WHERE id = ${deptID};`,
-                            (err, res) => {
-                                if (err) throw err;
-                                console.log(`${answer.deptName} dept was deleted!`);
+                        // connection.query(// Delete dept 
+                        //     `DELETE FROM department WHERE id = ${deptID};`,
+                        //     (err, res) => {
+                        //         if (err) throw err;
+                        //         console.log(`${answer.deptName} dept was deleted!`);
+                        //         start();
+                        //     }
+                        // )
+                        console.log(`${answer.deptName} dept was deleted!`);
                                 start();
-                            }
-                        )
                     }
                 )
             });
